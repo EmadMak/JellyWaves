@@ -11,14 +11,23 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController urlController = TextEditingController();
   TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   FocusNode urlFocusNode = FocusNode();
   FocusNode nameFocusNode = FocusNode();
+  FocusNode passwordFocusNode = FocusNode();
 
+  bool _isFormValid() {
+    return urlController.text.isNotEmpty &&
+      nameController.text.isNotEmpty &&
+      passwordController.text.isNotEmpty;
+  }
+  
   @override 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff1A1A1A),
+      resizeToAvoidBottomInset: false,
       body: _buildLoginScreen()
     );
   }
@@ -34,7 +43,14 @@ class _LoginScreenState extends State<LoginScreen> {
             urlController: urlController,
             urlFocusNode: urlFocusNode,
             nameController: nameController,
-            nameFocusNode: nameFocusNode
+            nameFocusNode: nameFocusNode,
+            passwordController: passwordController,
+            passwordFocusNode: passwordFocusNode
+          ),
+          SizedBox(height: 10),
+          connectButton(
+            enabled: _isFormValid(),
+            onPressed: () {}
           )
         ],
       );
