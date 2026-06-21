@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
                 
                 authStorage.saveSession(token: token, serverUrl: urlController.text);
-                Navigator.of(context).pushReplacementNamed("/home");
+                Navigator.of(context).pushReplacementNamed("/nav");
               } catch (e) {
                 debugPrint("Error: $e");
               }

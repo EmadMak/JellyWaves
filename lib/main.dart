@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jellywaves/login/login.dart';
-import 'package:jellywaves/home/home.dart';
+import 'package:jellywaves/home/nav.dart';
 import 'package:jellywaves/services/auth.dart';
 
 void main() async {
@@ -29,10 +29,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: isLoggedIn ? "/home" : "/login",
+      initialRoute: isLoggedIn ? "/nav" : "/login",
       routes: {
         "/login": (context) => LoginScreen(),
-        "/home": (context) => HomeScreen(),
+        "/nav": (context) => NavScreen(),
       }
     );
   }
