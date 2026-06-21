@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:jellywaves/login/login.dart';
+import 'package:jellywaves/home/home.dart';
+import 'package:jellywaves/services/auth.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final authStorage = AuthStorage();
+  final token = await authStorage.getToken();
+
+  debugPrint("token: $token");
+
+  runApp(
+    MyApp(
+      isLoggedIn: token != null
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+
+  const MyApp({
+    super.key,
+    required this.isLoggedIn,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: "/login",
+      initialRoute: isLoggedIn ? "/home" : "/login",
       routes: {
-        "/login": (context) => LoginScreen()
+        "/login": (context) => LoginScreen(),
+        "/home": (context) => HomeScreen(),
       }
     );
   }

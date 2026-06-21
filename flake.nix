@@ -16,7 +16,7 @@ outputs = { nixpkgs, flake-utils, ... }:
       };
       androidComposition = pkgs.androidenv.composeAndroidPackages {
         buildToolsVersions = [ "34.0.0" "35.0.0" ];
-        platformVersions = [ "34" "36" ];
+        platformVersions = [ "34" "35" "36" ];
         abiVersions = [ "x86_64" ];
         systemImageTypes = [ "google_apis" ];
 

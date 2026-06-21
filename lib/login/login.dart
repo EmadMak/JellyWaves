@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jellywaves/login/login_utils/components.dart';
+import 'package:jellywaves/services/jellyfin_api.dart';
+import 'package:jellywaves/services/auth.dart';
+import 'package:jellywaves/network/http_client_factory.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,7 +53,27 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(height: 10),
           connectButton(
             enabled: _isFormValid(),
-            onPressed: () {}
+            onPressed: () async {
+              try {
+                final authStorage = AuthStorage();
+                final client = await buildHttpClient();
+
+                final api = JellyfinApi(
+                  baseUrl: urlController.text,
+                  client: client
+                );
+
+                final token = await api.login(
+                  username: nameController.text,
+                  password: passwordController.text
+                );
+                
+                authStorage.saveSession(token: token, serverUrl: urlController.text);
+                Navigator.of(context).pushReplacementNamed("/home");
+              } catch (e) {
+                debugPrint("Error: $e");
+              }
+            }
           )
         ],
       );
