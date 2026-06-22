@@ -56,14 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () async {
               try {
                 final authStorage = AuthStorage();
-                final client = await buildHttpClient();
 
-                final api = JellyfinApi(
-                  baseUrl: urlController.text,
-                  client: client
-                );
+                JellyfinApi.initialize(baseUrl: urlController.text);
 
-                final token = await api.login(
+                final token = await JellyfinApi.instance.login(
                   username: nameController.text,
                   password: passwordController.text
                 );

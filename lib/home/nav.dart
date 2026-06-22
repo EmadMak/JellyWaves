@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:jellywaves/home/home.dart';
-import 'package:jellywaves/home/settings.dart';
+import 'package:jellywaves/home/settings/settings.dart';
 
 class NavScreen extends StatelessWidget {
   @override 

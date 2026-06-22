@@ -17,4 +17,13 @@ class AuthStorage {
   Future<String?> getToken() {
     return _storage.read(key: _tokenKey);
   }
+
+  Future<String?> getServer() {
+    return _storage.read(key: _serverUrlKey);
+  }
+  
+  Future<void> clearSession() async {
+    await _storage.delete(key: _tokenKey);
+    await _storage.delete(key: _serverUrlKey);
+  }
 }
