@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:jellywaves/home/home.dart';
 import 'package:jellywaves/home/settings/settings.dart';
+import 'package:jellywaves/home/library/library.dart';
 
 class NavScreen extends StatelessWidget {
   @override 
@@ -13,6 +14,15 @@ class NavScreen extends StatelessWidget {
           item: ItemConfig(
             icon: Icon(Icons.home),
             title: "Home",
+            inactiveForegroundColor: Color(0xffDDC6A7),
+            activeForegroundColor: Color(0xffB83A2E),
+          )
+        ),
+        PersistentTabConfig(
+          screen: LibraryScreen(),
+          item: ItemConfig(
+            icon: Icon(Icons.library_music),
+            title: "Library",
             inactiveForegroundColor: Color(0xffDDC6A7),
             activeForegroundColor: Color(0xffB83A2E),
           )

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:jellywaves/login/login_utils/components.dart';
 import 'package:jellywaves/services/jellyfin_api.dart';
 import 'package:jellywaves/services/auth.dart';
-import 'package:jellywaves/network/http_client_factory.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -59,12 +58,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 JellyfinApi.initialize(baseUrl: urlController.text);
 
-                final token = await JellyfinApi.instance.login(
+                final result = await JellyfinApi.instance.login(
                   username: nameController.text,
                   password: passwordController.text
                 );
                 
-                authStorage.saveSession(token: token, serverUrl: urlController.text);
+                authStorage.saveSession(
+                  token: result.accessToken, 
+                  userId: result.userId, 
+                  serverUrl: urlController.text
+                );
+
                 Navigator.of(context).pushReplacementNamed("/nav");
               } catch (e) {
                 debugPrint("Error: $e");

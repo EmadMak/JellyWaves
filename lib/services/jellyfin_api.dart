@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jellywaves/network/http_client_factory.dart';
+import 'package:jellywaves/models/login.dart';
+import 'package:jellywaves/models/album.dart';
 
 class JellyfinApi{
   JellyfinApi._({
@@ -42,7 +44,7 @@ class JellyfinApi{
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
-  Future<String> login({
+  Future<LoginResult> login({
     required String username,
     required String password
   }) async {
@@ -60,15 +62,15 @@ class JellyfinApi{
     );
 
     final data = jsonDecode(response.body) as Map<String, dynamic>;
-    return data['AccessToken'] as String;
+    return LoginResult.fromJson(data);
   }
   
-  Future<void> logout (String token) async {
+  Future<void> logout (String accessToken) async {
     final response = await client.post(
       baseUrl.resolve("/Sessions/Logout"),
       headers: {
         'Authorization':
-            'MediaBrowser Client="Jellywaves", Device="Android", DeviceId="jellywaves-dev-001", Version="0.1.0", Token="$token"',
+            'MediaBrowser Client="Jellywaves", Device="Android", DeviceId="jellywaves-dev-001", Version="0.1.0", Token="$accessToken"',
       }
     );
     
@@ -77,6 +79,58 @@ class JellyfinApi{
         "Logout failed: ${response.statusCode} ${response.body}"
       );
     }
+  }
+  
+  Future<List<Album>> getAlbums({
+    required String accessToken,
+    required String userId
+  }) async {
+    final uri = baseUrl.replace(
+      path: '${baseUrl.path}/Items',
+      queryParameters: {
+        'UserId': userId,
+        'IncludeItemTypes': 'MusicAlbum',
+        'Recursive': 'true',
+        'SortBy': 'SortName',
+        'SortOrder': 'Ascending',
+        'Fields': 'PrimaryImageAspectRatio,ProductionYear,AlbumArtist'
+      }
+    );
+
+    final response = await client.get(
+      uri,
+      headers: {
+        'Authorization': 
+          'MediaBrowser Token="$accessToken'
+      }
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "could not load albums: ${response.statusCode} ${response.body}"
+      );
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+    final items = data['Items'] as List<dynamic>;
+
+    return items
+      .map((item) => Album.fromJson(item as Map<String, dynamic>))
+      .toList(); 
+  }
+
+  Uri getAlbumImageUrl({
+    required String accessToken,
+    required String albumId
+  }) {
+    return baseUrl.replace(
+      path: "${baseUrl.path}/Items/$albumId/Images/Primary",
+      queryParameters: {
+        'maxWidth': '320',
+        'quality': '90'
+      }
+    );
   }
 
   static void dispose() {

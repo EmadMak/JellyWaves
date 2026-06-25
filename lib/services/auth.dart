@@ -4,13 +4,16 @@ class AuthStorage {
   final _storage = FlutterSecureStorage();
 
   static const _tokenKey = "auth.jellyfinToken";
+  static const _userIdKey = "auth.jellyfinUserId";
   static const _serverUrlKey = "auth.jellyfinServerUrl";
   
   Future<void> saveSession({
     required String token,
+    required String userId,
     required String serverUrl
   }) async {
     await _storage.write(key: _tokenKey, value: token);
+    await _storage.write(key: _userIdKey, value: userId);
     await _storage.write(key: _serverUrlKey, value: serverUrl);
   }
 
@@ -21,9 +24,14 @@ class AuthStorage {
   Future<String?> getServer() {
     return _storage.read(key: _serverUrlKey);
   }
+
+  Future<String?> getUserId() {
+    return _storage.read(key: _userIdKey);
+  }
   
   Future<void> clearSession() async {
     await _storage.delete(key: _tokenKey);
+    await _storage.delete(key: _userIdKey);
     await _storage.delete(key: _serverUrlKey);
   }
 }
