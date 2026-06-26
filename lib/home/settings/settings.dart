@@ -29,15 +29,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Settings",
-            style: TextStyle(
-             color: Color(0xffDDC6A7), 
-             fontSize: 30,
-             fontWeight: FontWeight.bold,
+          Center(
+            child: appText(
+              text: "Settings",
+              fontSize: 26,
+              fontWeight: FontWeight.bold
             )
           ),
-          SizedBox(height: 10),
+          Divider(
+            color: Color(0xffDDC6A7).withValues(alpha: 0.6),
+            height: 20,
+            thickness: 0.5
+          ),
           settingsBox(
             title: "Server",
             items: [

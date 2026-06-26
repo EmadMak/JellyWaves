@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jellywaves/network/http_client_factory.dart';
 import 'package:jellywaves/models/login.dart';
-import 'package:jellywaves/models/album.dart';
 
 class JellyfinApi{
   JellyfinApi._({
@@ -81,19 +80,23 @@ class JellyfinApi{
     }
   }
   
-  Future<List<Album>> getAlbums({
+  Future<List<T>> getItems<T>({
     required String accessToken,
-    required String userId
+    required String userId,
+    required String itemType,
+    required String fields,
+    String endpoint = "Items",
+    required T Function(Map<String, dynamic>) fromJson
   }) async {
     final uri = baseUrl.replace(
-      path: '${baseUrl.path}/Items',
+      path: '${baseUrl.path}/$endpoint',
       queryParameters: {
-        'UserId': userId,
-        'IncludeItemTypes': 'MusicAlbum',
+        "UserId": userId,
+        'IncludeItemTypes': itemType,
         'Recursive': 'true',
         'SortBy': 'SortName',
         'SortOrder': 'Ascending',
-        'Fields': 'PrimaryImageAspectRatio,ProductionYear,AlbumArtist'
+        'Fields': fields
       }
     );
 
@@ -101,13 +104,13 @@ class JellyfinApi{
       uri,
       headers: {
         'Authorization': 
-          'MediaBrowser Token="$accessToken'
+          'MediaBrowser Token="$accessToken"'
       }
     );
 
     if (response.statusCode != 200) {
       throw Exception(
-        "could not load albums: ${response.statusCode} ${response.body}"
+        "could not load items: ${response.statusCode} ${response.body}"
       );
     }
 
@@ -116,16 +119,16 @@ class JellyfinApi{
     final items = data['Items'] as List<dynamic>;
 
     return items
-      .map((item) => Album.fromJson(item as Map<String, dynamic>))
+      .map((item) => fromJson(item as Map<String, dynamic>))
       .toList(); 
   }
 
-  Uri getAlbumImageUrl({
+  Uri getImageUrl({
     required String accessToken,
-    required String albumId
+    required String id
   }) {
     return baseUrl.replace(
-      path: "${baseUrl.path}/Items/$albumId/Images/Primary",
+      path: "${baseUrl.path}/Items/$id/Images/Primary",
       queryParameters: {
         'maxWidth': '320',
         'quality': '90'

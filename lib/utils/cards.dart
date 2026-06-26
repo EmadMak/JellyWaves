@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:jellywaves/models/album.dart';
 import 'package:jellywaves/utils/text.dart';
 
-class AlbumCard extends StatelessWidget {
-  final Album album;
-  final String imageUrl;
+class ItemCard extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final String? imageUrl;
   final VoidCallback onTap;
 
-  const AlbumCard({
+  const ItemCard({
     super.key,
-    required this.album,
+    required this.title,
+    this.subtitle,
     required this.imageUrl,
     required this.onTap
   });
@@ -36,9 +38,9 @@ class AlbumCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(5),
-                child: album.hasPrimaryImage 
+                child: imageUrl != null 
                   ? Image.network(
-                      imageUrl,
+                      imageUrl!,
                       width: 80,
                       height: 80,
                       errorBuilder: (_, _, _) {
@@ -55,18 +57,16 @@ class AlbumCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       appText(
-                        text: album.name,
+                        text: title,
                         fontSize: 18,
                       ),
                       SizedBox(height: 3),
-                      appText(
-                        text: [
-                          if (album.artist != null) album.artist!,
-                          if (album.year != null) album.year!
-                        ].join(" • "),
-                        color: Color(0xffDDC6A7).withValues(alpha: 0.6),
-                        fontSize: 12
-                      )
+                      if (subtitle != null)
+                        appText(
+                          text: subtitle!,
+                          color: Color(0xffDDC6A7).withValues(alpha: 0.6),
+                          fontSize: 12
+                        )
                     ],
                   )
                 )

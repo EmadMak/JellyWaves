@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jellywaves/models/album.dart';
 import 'package:jellywaves/services/jellyfin_api.dart';
 import 'package:jellywaves/services/auth.dart';
-import 'package:jellywaves/home/library/utils/cards.dart';
+import 'package:jellywaves/utils/cards.dart';
 
 class AlbumsTab extends StatefulWidget {
   const AlbumsTab({super.key});
@@ -26,7 +26,13 @@ class _AlbumsTabState extends State<AlbumsTab> {
     final accessToken = await authStorage.getToken();
     final userId = await authStorage.getUserId();
 
-    final albums = await JellyfinApi.instance.getAlbums(userId: userId!, accessToken: accessToken!);
+    final albums = await JellyfinApi.instance.getItems<Album>(
+      userId: userId!, 
+      accessToken: accessToken!,
+      itemType: "MusicAlbum",
+      fields: 'PrimaryImageAspectRatio,ProductionYear,AlbumArtist',
+      fromJson: Album.fromJson
+    );
     
     return _AlbumsData(
       albums: albums,
@@ -56,30 +62,31 @@ class _AlbumsTabState extends State<AlbumsTab> {
 
         final data = snapshot.data!;
 
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: ListView.separated(
-            itemCount: data.albums.length,
+        return ListView.separated(
+          itemCount: data.albums.length,
 
-            separatorBuilder: (context, index) {
+          separatorBuilder: (context, index) {
             return SizedBox(height: 10);
-            },
+          },
 
-            itemBuilder: (context, index) {
-              final album = data.albums[index];
+          itemBuilder: (context, index) {
+            final album = data.albums[index];
 
-              final imageUrl = JellyfinApi.instance.getAlbumImageUrl(
-                accessToken: data.accessToken,
-                albumId: album.id,
-              ).toString();
+            final imageUrl = JellyfinApi.instance.getImageUrl(
+              accessToken: data.accessToken,
+              id: album.id,
+            ).toString();
 
-              return AlbumCard(
-                album: album,
-                imageUrl: imageUrl,
-                onTap: () {} 
-              );
-            }
-          )
+            return ItemCard(
+              title: album.name,
+              subtitle: [
+                if (album.artist != null) album.artist!,
+                if (album.year != null) album.year
+              ].join(" • "),
+              imageUrl: imageUrl,
+              onTap: () {}
+            );
+          }
         );
       }
     );

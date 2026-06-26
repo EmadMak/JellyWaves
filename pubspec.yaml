@@ -40,6 +40,7 @@ dependencies:
   http:
   cronet_http: ^1.8.0
   persistent_bottom_nav_bar_v2:
+  google_fonts: ^8.1.0
 
 dev_dependencies:
   flutter_test:
