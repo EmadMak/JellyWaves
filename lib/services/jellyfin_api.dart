@@ -83,21 +83,29 @@ class JellyfinApi{
   Future<List<T>> getItems<T>({
     required String accessToken,
     required String userId,
-    required String itemType,
-    required String fields,
-    String endpoint = "Items",
+    String? itemType,
+    String? fields,
+    required String endpoint,
     required T Function(Map<String, dynamic>) fromJson
   }) async {
-    final uri = baseUrl.replace(
-      path: '${baseUrl.path}/$endpoint',
-      queryParameters: {
+    final queryParameters = <String, String>{
         "UserId": userId,
-        'IncludeItemTypes': itemType,
         'Recursive': 'true',
         'SortBy': 'SortName',
         'SortOrder': 'Ascending',
-        'Fields': fields
+      };
+
+      if (itemType != null) {
+        queryParameters['IncludeItemTypes'] = itemType;
       }
+
+      if (fields != null) {
+        queryParameters['Fields'] = fields;
+      }
+
+    final uri = baseUrl.replace(
+      path: '${baseUrl.path}/$endpoint',
+      queryParameters: queryParameters
     );
 
     final response = await client.get(
@@ -124,7 +132,6 @@ class JellyfinApi{
   }
 
   Uri getImageUrl({
-    required String accessToken,
     required String id
   }) {
     return baseUrl.replace(

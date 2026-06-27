@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jellywaves/utils/text.dart';
-import 'package:jellywaves/home/library/tabs/albums.dart';
-import 'package:jellywaves/home/library/tabs/artists.dart';
+import 'package:jellywaves/utils/cards_list.dart';
+import 'package:jellywaves/models/jellyfin_items.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -84,11 +84,41 @@ class _LibraryScreenState extends State<LibraryScreen> with SingleTickerProvider
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      AlbumsTab(),
-                      ArtistsTab(),
-                      Center(child: Text("TODO", style: TextStyle(color: Colors.white))),
-                      Center(child: Text("TODO", style: TextStyle(color: Colors.white))),
-                      Center(child: Text("TODO", style: TextStyle(color: Colors.white))),
+                      CardsList(
+                        itemType: "MusicAlbum",
+                        fields: 'PrimaryImageAspectRatio,ProductionYear,AlbumArtist',
+                        endpoint: "Items",
+                        subtitleBuilder: (album) {
+                          return [
+                            if (album.artist != null) album.artist,
+                            if (album.year != null) album.year
+                          ].join(" • ");
+                        },
+                        fromJson: Album.fromJson
+                      ),
+                      CardsList(
+                        itemType: "MusicArtist",
+                        fields: 'PrimaryImageAspectRatio',
+                        endpoint: "Items",
+                        fromJson: Artist.fromJson
+                      ),
+                      CardsList(
+                        fields: "PrimaryImageAspectRatio,ItemCounts",
+                        endpoint: "MusicGenres",
+                        fromJson: Genre.fromJson
+                      ),
+                      CardsList(
+                        itemType: "Playlist",
+                        fields: 'PrimaryImageAspectRatio',
+                        endpoint: "Items",
+                        fromJson: Playlist.fromJson
+                      ),
+                      CardsList(
+                        itemType: "Audio",
+                        fields: "PrimaryImageAspectRatio,AlbumPrimaryImageTag,AlbumId",
+                        endpoint: "Items",
+                        fromJson: Song.fromJson
+                      )
                     ],
                   )
                 )

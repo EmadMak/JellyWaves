@@ -6,7 +6,12 @@ import 'package:jellywaves/utils/buttons.dart';
 import 'package:jellywaves/services/jellyfin_api.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final VoidCallback onLogout;
+
+  const SettingsScreen({
+    super.key,
+    required this.onLogout
+  });
 
   @override 
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -63,8 +68,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               await JellyfinApi.instance.logout(token!);
               await authStorage.clearSession();
               JellyfinApi.dispose();
-              
-              Navigator.of(context).pushReplacementNamed("/login");
+  
+              widget.onLogout();
             }
           )
         ],

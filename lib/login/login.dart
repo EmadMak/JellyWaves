@@ -4,7 +4,12 @@ import 'package:jellywaves/services/jellyfin_api.dart';
 import 'package:jellywaves/services/auth.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final VoidCallback onLogin;
+
+  const LoginScreen({
+    super.key,
+    required this.onLogin
+  });
 
   @override 
   State<LoginScreen> createState() => _LoginScreenState();
@@ -56,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
               try {
                 final authStorage = AuthStorage();
 
-                JellyfinApi.initialize(baseUrl: urlController.text);
+                await JellyfinApi.initialize(baseUrl: urlController.text);
 
                 final result = await JellyfinApi.instance.login(
                   username: nameController.text,
@@ -69,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   serverUrl: urlController.text
                 );
 
-                Navigator.of(context).pushReplacementNamed("/nav");
+                widget.onLogin();
               } catch (e) {
                 debugPrint("Error: $e");
               }

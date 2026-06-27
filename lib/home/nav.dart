@@ -5,6 +5,13 @@ import 'package:jellywaves/home/settings/settings.dart';
 import 'package:jellywaves/home/library/library.dart';
 
 class NavScreen extends StatelessWidget {
+  final VoidCallback onLogout;
+
+  const NavScreen({
+    super.key,
+    required this.onLogout
+  });
+
   @override 
   Widget build(BuildContext context) {
     return PersistentTabView(
@@ -28,7 +35,7 @@ class NavScreen extends StatelessWidget {
           )
         ),
         PersistentTabConfig(
-          screen: SettingsScreen(),
+          screen: SettingsScreen(onLogout: onLogout),
           item: ItemConfig(
             icon: Icon(Icons.settings),
             title: "Settings",

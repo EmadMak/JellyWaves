@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jellywaves/models/album.dart';
 import 'package:jellywaves/utils/text.dart';
 
 class ItemCard extends StatelessWidget {
@@ -80,7 +79,8 @@ class ItemCard extends StatelessWidget {
 
   Widget _placeholder() {
     return Container(
-      width: double.infinity,
+      width: 80,
+      height: 80,
       color: Color(0xffDDC6A7),
       alignment: Alignment.center,
       child: Icon(

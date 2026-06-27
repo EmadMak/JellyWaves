@@ -7,37 +7,73 @@ import 'package:jellywaves/services/jellyfin_api.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final authStorage = AuthStorage();
-  final token = await authStorage.getToken();
-  final serverUrl = await authStorage.getServer();
-
-  if (token != null && serverUrl != null) {
-    await JellyfinApi.initialize(baseUrl: serverUrl);
-  }
-
   runApp(
-    MyApp(
-      isLoggedIn: token != null
-    )
+    MyApp()
   );
 }
 
-class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-  const MyApp({
-    super.key,
-    required this.isLoggedIn,
-  });
+  @override 
+  State<MyApp> createState() => _MyAppState();
+}
 
-  @override
+class _MyAppState extends State<MyApp> {
+  final authStorage = AuthStorage();
+
+  bool _isLoading = true;
+  bool _isLoggedIn = false;
+
+  @override 
+  void initState() {
+    super.initState();
+    _loadSession();
+  }
+
+  Future<void> _loadSession() async {
+    final token = await authStorage.getToken();
+    final serverUrl = await authStorage.getServer();
+
+    if (token != null && serverUrl != null) {
+      await JellyfinApi.initialize(baseUrl: serverUrl);
+      _isLoggedIn = true;
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _handleLogin() {
+    setState(() {
+      _isLoggedIn = true;
+    });
+  }
+
+  void _handleLogout() {
+    setState(() {
+      _isLoggedIn = false;
+    });
+  }
+
+  @override 
   Widget build(BuildContext context) {
+    if(_isLoading) {
+      return const MaterialApp(
+        home: Scaffold(
+          backgroundColor: Color(0xff1A1A1A),
+          body: Center(
+            child: CircularProgressIndicator()
+          )
+        )
+      );
+    }
+
     return MaterialApp(
-      initialRoute: isLoggedIn ? "/nav" : "/login",
-      routes: {
-        "/login": (context) => LoginScreen(),
-        "/nav": (context) => NavScreen(),
-      }
+      home: _isLoggedIn 
+        ? NavScreen(onLogout: _handleLogout)
+        : LoginScreen(onLogin: _handleLogin)
     );
   }
 }
